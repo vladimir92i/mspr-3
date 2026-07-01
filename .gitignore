@@ -1,0 +1,8 @@
+postgresql/data/*
+nginx-data/*
+letsencrypt/*
+grafana-data/csv/*
+grafana-data/pdf/*
+grafana-data/png/*
+grafana-data/plugins/*
+grafana-data/unified-search/*

@@ -1,0 +1,3 @@
+[submodule "app/services/ia"]
+	path = app/services/ia
+	url = git@github.com:MSPR-2026-GRP-A/bloc-2-4-create-ia.git

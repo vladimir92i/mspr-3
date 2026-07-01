@@ -1,0 +1,124 @@
+volumes:
+  netdataconfig:
+  netdatalib:
+  netdatacache:
+services:
+  database:
+    container_name: database
+    build: ./postgresql
+    environment:
+      POSTGRES_DB: ObRail
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: tchou_tchou
+    networks:
+      - ob-rail_backend_net
+      # - ob-rail_etl_net
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql
+      - ./postgresql/db.sql:/docker-entrypoint-initdb.d/01-init.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  backend:
+    container_name: backend
+    build: ./backend
+    networks:
+      - ob-rail_backend_net
+      - ob-rail_frontend_net
+      # - nginx-proxy
+    depends_on:
+      - database
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    networks:
+      - ob-rail_frontend_net
+      # - nginx-proxy
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - ob-rail_backend_net
+      - ob-rail_monitor_net
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    ports:
+      - "3030:3000"
+    volumes:
+      - ./grafana-data:/var/lib/grafana
+    user: "472"
+    networks:
+      - ob-rail_monitor_net
+      # - nginx-proxy
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - "8080:8080"
+    networks:
+      - ob-rail_monitor_net
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    networks:
+      - ob-rail_monitor_net
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./promtail/promtail-config.yml:/etc/promtail/config.yml
+    networks:
+      - ob-rail_monitor_net
+  
+  # nginx_proxy_manager:
+  #   image: 'jc21/nginx-proxy-manager:latest'
+  #   container_name: nginx_proxy_manager
+  #   ports:
+  #     - '80:80'
+  #     - '81:81'
+  #     - '443:443'
+  #   networks:
+      # - nginx-proxy
+  #   volumes:
+  #     - ./nginx-data:/data
+  #     - ./letsencrypt:/etc/letsencrypt
+  #   restart: unless-stopped
+      
+networks:
+  nginx-proxy:
+  ob-rail_backend_net:
+    internal: true
+  ob-rail_frontend_net:
+  ob-rail_monitor_net:
