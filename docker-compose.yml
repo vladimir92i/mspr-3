@@ -23,6 +23,8 @@ services:
   backend:
     container_name: backend
     build: ./backend
+    environment:
+      API_KEY: obrail-local-api-key
     networks:
       - ob-rail_backend_net
       - ob-rail_frontend_net
@@ -40,6 +42,9 @@ services:
   frontend:
     container_name: frontend
     build: ./frontend
+    environment:
+      API_URL: http://backend:8000
+      API_KEY: obrail-local-api-key
     networks:
       - ob-rail_frontend_net
       # - nginx-proxy

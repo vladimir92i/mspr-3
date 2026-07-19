@@ -18,7 +18,6 @@ interface BackendPredictionResponse {
 
 type Status = "idle" | "loading" | "success" | "error";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const MIN_DISTANCE = 405;
 const MAX_DISTANCE = 1847;
 
@@ -69,7 +68,7 @@ export default function PredictPage() {
     setErrorMsg("");
     if (liveRef.current) liveRef.current.textContent = "Calcul en cours…";
     try {
-      const res = await fetch(`${API_URL}/api/ml/predict?distance=${Number(distance)}`, {
+      const res = await fetch(`/api/predict?distance=${Number(distance)}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });

@@ -1,9 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends, Header
 import os
 
-API_KEY = os.environ.get("API_KEY")
+from app.services.ml_service import predict_emission
 
-def verify_api_key(x_api_key: str = Header(...)):
+API_KEY = os.environ.get("API_KEY", "obrail-local-api-key")
+
+def verify_api_key(x_api_key: str | None = Header(default=None, alias="x-api-key")):
     if x_api_key != API_KEY:
         raise HTTPException(status_code=401, detail="Clé API invalide")
 
