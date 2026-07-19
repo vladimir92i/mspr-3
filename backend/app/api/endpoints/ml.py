@@ -1,14 +1,17 @@
-from fastapi import APIRouter, HTTPException
-from app.services.ml_service import predict_emission
+from fastapi import APIRouter, HTTPException, Depends, Header
+import os
+
+API_KEY = os.environ.get("API_KEY")
+
+def verify_api_key(x_api_key: str = Header(...)):
+    if x_api_key != API_KEY:
+        raise HTTPException(status_code=401, detail="Clé API invalide")
 
 router = APIRouter(prefix="/ml", tags=["Machine Learning"])
 
-# ---------------------------------------------------------------------------
-# GET /ml/predict
-# ---------------------------------------------------------------------------
-
-@router.get("/predict", summary="Prédit l'émission Co2 d'un trip")
+@router.get("/predict", summary="Prédit l'émission Co2 d'un trip", dependencies=[Depends(verify_api_key)])
 def predict(distance: int):
+    ...
     try:
         return {
             "distance_km": distance,

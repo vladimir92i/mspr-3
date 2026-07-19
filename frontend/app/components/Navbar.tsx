@@ -16,6 +16,7 @@ const NAV_LINKS = [
   { name: "Trajets", href: "/" },
   { name: "Statistiques", href: "/statistiques" },
   { name: "Supervision", href: "http://localhost:3030", external: true },
+  { name: "Prediction", href: "/prediction" },
 ];
 
 export default function Navbar() {
