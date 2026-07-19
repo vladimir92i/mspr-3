@@ -15,7 +15,7 @@ import { cn } from "@/app/lib/utils"; // Utilitaire classique pour fusionner les
 const NAV_LINKS = [
   { name: "Trajets", href: "/" },
   { name: "Statistiques", href: "/statistiques" },
-  { name: "Supervision", href: "/supervision" },
+  { name: "Supervision", href: "http://localhost:3030", external: true },
 ];
 
 export default function Navbar() {
@@ -41,24 +41,35 @@ export default function Navbar() {
         <NavigationMenuList className="gap-2">
           {/* On réduit le gap car les boutons ont du padding interne */}
           {NAV_LINKS.map((link) => {
-            const isActive = pathname === link.href;
+            const isActive = !link.external && pathname === link.href;
 
             return (
               <NavigationMenuItem key={link.href}>
                 {/* On ajoute 'asChild' sur NavigationMenuLink 
                   Cela lui dit : "ne crée pas de <a>, utilise celui de mon enfant" */}
                 <NavigationMenuLink asChild active={isActive}>
-                  <Link
-                    href={link.href}
-                    aria-current={isActive ? "page" : undefined}
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      "text-sm font-medium transition-all",
-                      isActive ? "bg-blue-50 text-blue-600 focus:bg-blue-50 focus:text-blue-600" : "text-slate-600",
-                    )}
-                  >
-                    {link.name}
-                  </Link>
+                  {link.external ? (
+                    <a
+                      href={link.href}
+                      className={cn(navigationMenuTriggerStyle(), "text-sm font-medium transition-all text-slate-600")}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {link.name}
+                    </a>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      aria-current={isActive ? "page" : undefined}
+                      className={cn(
+                        navigationMenuTriggerStyle(),
+                        "text-sm font-medium transition-all",
+                        isActive ? "bg-blue-50 text-blue-600 focus:bg-blue-50 focus:text-blue-600" : "text-slate-600",
+                      )}
+                    >
+                      {link.name}
+                    </Link>
+                  )}
                 </NavigationMenuLink>
               </NavigationMenuItem>
             );

@@ -93,15 +93,6 @@ services:
     networks:
       - ob-rail_monitor_net
 
-  promtail:
-    image: grafana/promtail:latest
-    container_name: promtail
-    volumes:
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - ./promtail/promtail-config.yml:/etc/promtail/config.yml
-    networks:
-      - ob-rail_monitor_net
-  
   # nginx_proxy_manager:
   #   image: 'jc21/nginx-proxy-manager:latest'
   #   container_name: nginx_proxy_manager
@@ -110,12 +101,12 @@ services:
   #     - '81:81'
   #     - '443:443'
   #   networks:
-      # - nginx-proxy
+  # - nginx-proxy
   #   volumes:
   #     - ./nginx-data:/data
   #     - ./letsencrypt:/etc/letsencrypt
   #   restart: unless-stopped
-      
+
 networks:
   nginx-proxy:
   ob-rail_backend_net:
