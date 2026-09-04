@@ -3,23 +3,28 @@
 Ce projet orchestre une architecture complète en microservices. Le code source du Frontend et du Backend est géré dans des **dépôts Git séparés**, clonés indépendamment.
 
 ## Architecture Réseau
+
 Pour garantir la sécurité, les réseaux sont segmentés :
-*   **`frontend_net`** : Liaison entre Traefik, le Frontend et le Backend.
-*   **`backend_net`** : Isolation de la Database (accessible uniquement par le Backend).
-*   **`monitor_net`** : Flux dédié au monitoring.
+
+- **`frontend_net`** : Liaison entre Traefik, le Frontend et le Backend.
+- **`backend_net`** : Isolation de la Database (accessible uniquement par le Backend).
+- **`monitor_net`** : Flux dédié au monitoring.
 
 ---
 
 ## Pré-requis
-*   Docker & Docker Compose
-*   Git
+
+- Docker & Docker Compose
+- Git
 
 ---
 
 ## Installation et Démarrage
 
 ### 1. Cloner le projet et ses dépendances
+
 Le Frontend et le Backend sont des **dépôts Git séparés** clonés indépendamment :
+
 ```bash
 git clone <url-du-depot-principal>
 cd ob-rail-bloc-3
@@ -45,29 +50,35 @@ docker network create --driver bridge ob-rail_etl_net
 ```
 
 ### 2. Créer les .env
+
 Dans le dossier backend et frontend, à partir de leur .env.example respectif
 
 Pour le frontend : l'url de l'API
 Pour le backend : l'url de la DB, User, Password
 
 ### 3. Lancer la stack
+
 ```bash
 docker-compose up -d --build
 ```
+
 > **Note :** L'option `--build` est importante pour s'assurer que les images sont reconstruites à partir du code actuel de vos submodules.
 
 ---
 
 ## Travailler avec les Sous-projets
+
 Lorsque vous modifiez le code dans les dossiers `frontend-Bloc-3/` ou `backend-bloc-3/` :
 
-*   **Mettre à jour les sous-projets :** `git pull` dans chaque dossier séparément
-*   **Reconstruire un service spécifique :** `docker-compose up -d --build backend`
+- **Mettre à jour les sous-projets :** `git pull` dans chaque dossier séparément
+- **Reconstruire un service spécifique :** `docker-compose up -d --build backend`
 
 ---
 
 ## Notes sur PostgreSQL (v18+)
+
 En cas d'erreur de compatibilité de dossier (`pg_ctlcluster`), réinitialisez le volume :
+
 ```bash
 docker-compose down -v
 docker-compose up -d
@@ -76,16 +87,21 @@ docker-compose up -d
 ---
 
 ## Accès aux services
-*   **Frontend** : /3000
-*   **Backend API** : /8000
-*   **Monitoring** : /3030
+
+- **Frontend** : /3000
+- **Backend API** : /8000
+- **Monitoring** : /3030
 
 ---
 
 ## Commandes utiles
-| Action | Commande |
-| :--- | :--- |
-| Voir les logs | `docker-compose logs -f` |
-| Arrêter la stack | `docker-compose stop` |
+
+| Action                          | Commande                 |
+| :------------------------------ | :----------------------- |
+| Voir les logs                   | `docker-compose logs -f` |
+| Arrêter la stack                | `docker-compose stop`    |
 | Tout supprimer (volumes inclus) | `docker-compose down -v` |
+
+```
+
 ```

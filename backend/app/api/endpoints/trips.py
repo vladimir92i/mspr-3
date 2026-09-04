@@ -5,7 +5,7 @@ from datetime import time
 
 from app.database import get_session
 from app.models.database_models import Trip, Agency, Station, Stop
-from app.models.graph_models import TripResponse, TripDetailResponse, StatsVolumesResponse
+from app.models.api_models import TripResponse, TripDetailResponse, StatsVolumesResponse
 
 router = APIRouter(prefix="/trajets", tags=["Trajets"])
 

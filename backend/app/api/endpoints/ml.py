@@ -20,4 +20,4 @@ def predict(distance: int):
             "predicted_co2_kg": predict_emission(distance),
         }
     except ValueError as e:
-        raise HTTPException(status_code=422, detail=str(e))
+        raise HTTPException(status_code=422, detail=str(e))y

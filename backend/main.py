@@ -3,11 +3,7 @@ from contextlib import asynccontextmanager
 from prometheus_fastapi_instrumentator import Instrumentator
 from prometheus_client import Counter
 import os
-
-from app.api.endpoints import graph, ml, trips
-from app.database import get_session
-from app.services.graph_builder import build_graph
-from app.services.graph_cache import GraphCache
+from app.api.endpoints import ml, trips
 from fastapi.middleware.cors import CORSMiddleware
 
 origins = os.getenv("ALLOWED_ORIGINS", "").split(",")
@@ -27,17 +23,9 @@ async def lifespan(app: FastAPI):
     else:
         print("Aucun modèle ML trouvé — utilisez POST /api/ml/train pour l'entraîner.")
 
-    session = next(get_session())
-    try:
-        G = build_graph(session)
-        GraphCache.set(G)
-    finally:
-        session.close()
-
     yield
 
     ml_models.clear()
-    GraphCache.invalidate()
 
 app = FastAPI(
     title="OB Rail — Co2 Optimizer",
@@ -66,5 +54,4 @@ async def count_requests(request: Request, call_next):
 Instrumentator().instrument(app).expose(app)
 
 app.include_router(trips.router, prefix="/api")
-app.include_router(graph.router, prefix="/api")
 app.include_router(ml.router, prefix="/api")
