@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 from typing import List, Optional
 from datetime import time
 
+from app.api.deps import verify_api_key
 from app.database import get_session
 from app.models.database_models import Trip, Agency, Station, Stop
-from app.models.api_models import TripResponse, TripDetailResponse, StatsVolumesResponse
+from app.models.api_models import TripResponse, TripDetailResponse, StatsVolumesResponse, StopDetail
 
 router = APIRouter(prefix="/trajets", tags=["Trajets"])
 
@@ -109,3 +110,47 @@ def get_stats_volumes(session: Session = Depends(get_session)):
         "nb_operators": nb_agencies,
         "trips_by_operator": trips_by_agency,
     }
+
+
+# ---------------------------------------------------------------------------
+# GET /trajets/{trip_id}/arrets
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/{trip_id}/arrets",
+    response_model=List[StopDetail],
+    summary="Liste les arrêts d'un trajet",
+    dependencies=[Depends(verify_api_key)],
+)
+def get_trip_stops(
+    trip_id: int,
+    limit: int = Query(default=50, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
+    session: Session = Depends(get_session),
+):
+    trip = session.get(Trip, trip_id)
+    if not trip:
+        raise HTTPException(status_code=404, detail=f"Trajet {trip_id} introuvable.")
+
+    stops_statement = (
+        select(Stop, Station)
+        .join(Station, Stop.id_station == Station.id_station)
+        .where(Stop.id_trip == trip_id)
+        .order_by(Stop.stop_sequence)
+        .offset(offset)
+        .limit(limit)
+    )
+    stops_data = session.exec(stops_statement).all()
+
+    return [
+        {
+            "stop_sequence": stop.stop_sequence,
+            "station_name": station.name,
+            "city": station.city,
+            "arrival_time": str(stop.arrival_time) if stop.arrival_time else None,
+            "departure_time": str(stop.departure_time) if stop.departure_time else None,
+            "latitude": float(station.stop_lat) if station.stop_lat else None,
+            "longitude": float(station.stop_lon) if station.stop_lon else None,
+        }
+        for stop, station in stops_data
+    ]

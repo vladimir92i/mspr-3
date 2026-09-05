@@ -1,13 +1,7 @@
-from fastapi import APIRouter, HTTPException, Depends, Header
-import os
+from fastapi import APIRouter, HTTPException, Depends
 
+from app.api.deps import verify_api_key
 from app.services.ml_service import predict_emission
-
-API_KEY = os.environ.get("API_KEY", "obrail-local-api-key")
-
-def verify_api_key(x_api_key: str | None = Header(default=None, alias="x-api-key")):
-    if x_api_key != API_KEY:
-        raise HTTPException(status_code=401, detail="Clé API invalide")
 
 router = APIRouter(prefix="/ml", tags=["Machine Learning"])
 
@@ -20,4 +14,4 @@ def predict(distance: int):
             "predicted_co2_kg": predict_emission(distance),
         }
     except ValueError as e:
-        raise HTTPException(status_code=422, detail=str(e))y
+        raise HTTPException(status_code=422, detail=str(e))

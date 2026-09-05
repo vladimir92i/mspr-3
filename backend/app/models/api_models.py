@@ -1,43 +1,7 @@
 from typing import List, Optional, Dict
-from datetime import time
+from datetime import time, datetime
 from decimal import Decimal
 from pydantic import BaseModel, Field
-
-
-# ---------------------------------------------------------------------------
-# Itinéraires (routes existantes)
-# ---------------------------------------------------------------------------
-
-class TripStep(BaseModel):
-    trip_id: int
-    trip_name: Optional[str]
-    origin: str
-    destination: str
-    departure_time: Optional[time]
-    arrival_time: Optional[time]
-    duration_minutes: Optional[int]
-    distance_km: Optional[int]
-    co2_kg: float
-    co2_estimated: bool
-    agency_name: Optional[str] = None
-
-
-class RouteResponse(BaseModel):
-    origin: str
-    destination: str
-    steps: List[TripStep]
-    total_co2_kg: float
-    total_duration_minutes: Optional[int]
-    total_distance_km: Optional[int]
-    nb_changes: int
-    has_estimated_co2: bool
-
-
-class RouteCompareResponse(BaseModel):
-    co2_optimal: RouteResponse
-    time_optimal: RouteResponse
-    co2_saved_kg: float
-    time_lost_minutes: Optional[int]
 
 
 # ---------------------------------------------------------------------------
@@ -100,6 +64,41 @@ class StatsVolumesResponse(BaseModel):
     nb_night_trips: int
     nb_operators: int
     trips_by_operator: Dict[str, int]
+
+
+# ---------------------------------------------------------------------------
+# Référentiel — /gares, /agences, /pays, /sources
+# ---------------------------------------------------------------------------
+
+class StationResponse(BaseModel):
+    id_station: int
+    name: Optional[str]
+    city: Optional[str]
+    stop_lat: Optional[float]
+    stop_lon: Optional[float]
+    id_country: int
+
+    class Config:
+        from_attributes = True
+
+
+class CountryResponse(BaseModel):
+    id_country: int
+    name: Optional[str]
+    code_iso: Optional[str]
+
+    class Config:
+        from_attributes = True
+
+
+class SourceResponse(BaseModel):
+    id_source: int
+    source_dataset: Optional[str]
+    format_origin: Optional[str]
+    collection_date: Optional[datetime]
+
+    class Config:
+        from_attributes = True
 
 
 # ---------------------------------------------------------------------------

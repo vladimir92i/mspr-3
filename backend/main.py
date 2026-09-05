@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from prometheus_fastapi_instrumentator import Instrumentator
 from prometheus_client import Counter
 import os
-from app.api.endpoints import ml, trips
+from app.api.endpoints import ml, trips, references
 from fastapi.middleware.cors import CORSMiddleware
 
 origins = os.getenv("ALLOWED_ORIGINS", "").split(",")
@@ -55,3 +55,4 @@ Instrumentator().instrument(app).expose(app)
 
 app.include_router(trips.router, prefix="/api")
 app.include_router(ml.router, prefix="/api")
+app.include_router(referentiel.router, prefix="/api")
