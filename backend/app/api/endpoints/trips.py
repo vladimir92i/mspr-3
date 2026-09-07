@@ -10,8 +10,8 @@ from app.models.api_models import TripResponse, TripDetailResponse, StatsVolumes
 
 router = APIRouter(prefix="/trajets", tags=["Trajets"])
 
-# Nuit = 22h00 → 05h59
-NIGHT_START = time(22, 0)
+# Nuit = 0h00 → 05h59
+NIGHT_START = time(18, 0)
 NIGHT_END   = time(5, 59)
 
 def _is_night(t: Optional[time]) -> bool:

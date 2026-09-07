@@ -463,24 +463,6 @@ export default function PredictPage() {
         }}
       />
 
-      {/* En-tête */}
-      <header className="page-header" role="banner">
-        <div className="header-inner">
-          <div className="logo-rail" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <rect x="3" y="10" width="18" height="4" rx="2" fill="white" />
-              <rect x="6" y="6" width="12" height="2" rx="1" fill="white" opacity="0.6" />
-              <circle cx="7" cy="17" r="2" fill="white" />
-              <circle cx="17" cy="17" r="2" fill="white" />
-            </svg>
-          </div>
-          <div className="header-text">
-            <div className="site-title">ObRail Europe</div>
-            <div className="site-subtitle">Observatoire ferroviaire & mobilité durable</div>
-          </div>
-        </div>
-      </header>
-
       {/* Contenu principal */}
       <main id="main-content" tabIndex={-1}>
         <div className="intro">

@@ -23,5 +23,5 @@ différences de comportement SQL (contraintes, types, etc.) - unittest.mock.patc
 Couverture visée (C12) : - Cas nominaux (200) pour chaque endpoint - Cas d'erreur attendus par la spec (404, 422, 401) - Cas limites de la fonction \_is_night (bornes incluses, None, jour, nuit) - Vérification du format/contenu de la réponse (pas seulement le code HTTP)
 
 Exécution :
-pytest test_routes.py -v
+docker compose exec backend pytest tests/test_routes.py -v
 """

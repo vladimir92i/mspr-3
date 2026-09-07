@@ -28,5 +28,3 @@ EXPOSE 8000
 
 # 9. Lancer l'application avec Uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-
-CMD ["fastapi", "dev", "main.py", "--host", "0.0.0.0", "--port", "8000"]

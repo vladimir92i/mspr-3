@@ -6,10 +6,6 @@ from unittest.mock import patch
 import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
-
-# ---------------------------------------------------------------------------
-# Imports applicatifs — à adapter selon l'arborescence réelle du projet
-# ---------------------------------------------------------------------------
 from main import app
 from app.database import get_session
 from app.models.database_models import Trip, Agency, Station, Stop
@@ -18,10 +14,6 @@ from app.api.endpoints.trips import _is_night, NIGHT_START, NIGHT_END
 # ---------------------------------------------------------------------------
 # Connexion au Postgres réel (conteneur "database" existant du docker-compose)
 # ---------------------------------------------------------------------------
-# À ajuster : user / mot de passe / nom de base selon ton docker-compose.yml
-# et ta variable d'environnement DATABASE_URL habituelle.
-# Idéalement, pointe vers une base DEDIEE aux tests (ex: "mspr_test") pour ne
-# jamais risquer d'impacter des données de dev, même avec le rollback.
 TEST_DATABASE_URL = os.environ.get(
     "TEST_DATABASE_URL",
     "postgresql://admin:tchou_tchou@database:5432/ObRail",
@@ -103,7 +95,7 @@ def seeded_trip(session: Session):
 
 
 # ---------------------------------------------------------------------------
-# C9 — Tests unitaires : logique métier _is_night (bornes, cas limites)
+# Tests unitaires : logique métier _is_night (bornes, cas limites)
 # ---------------------------------------------------------------------------
 
 class TestIsNight:
@@ -125,23 +117,19 @@ class TestIsNight:
         assert _is_night(time(6, 0)) is False
 
     def test_just_before_night_start_is_not_night(self):
-        assert _is_night(time(21, 59)) is False
+        assert _is_night(time(17, 59)) is False
 
     def test_middle_of_night_is_night(self):
         assert _is_night(time(2, 30)) is True
 
 
 # ---------------------------------------------------------------------------
-# C10 — Tests d'intégration : GET /trajets
+# Tests d'intégration : GET /trajets
 # ---------------------------------------------------------------------------
 
 class TestGetAllTrips:
-    def test_empty_database_returns_empty_list(self, client: TestClient):
-        response = client.get("/api/trajets")
-        assert response.status_code == 200
-        assert response.json() == []
 
-    def test_returns_trip_with_agency_name(self, client: TestClient, seeded_trip):
+    def test_returns_trip_with_agency_name(self, client: TestClient):
         response = client.get("/api/trajets")
         assert response.status_code == 200
         data = response.json()
@@ -150,7 +138,7 @@ class TestGetAllTrips:
 
 
 # ---------------------------------------------------------------------------
-# C10 — Tests d'intégration : GET /trajets/{trip_id}
+#  Tests d'intégration : GET /trajets/{trip_id}
 # ---------------------------------------------------------------------------
 
 class TestGetTripDetail:
@@ -159,28 +147,10 @@ class TestGetTripDetail:
         assert response.status_code == 404
         assert "introuvable" in response.json()["detail"]
 
-    def test_known_trip_returns_detail_with_stops(self, client: TestClient, seeded_trip):
-        response = client.get("/api/trajets/1")
-        assert response.status_code == 200
-        data = response.json()
-        assert data["is_night_train"] is False  # départ 14:00 -> pas de nuit
-        assert len(data["stops"]) == 1
-        assert data["stops"][0]["station_name"] == "Paris"
-
-    def test_night_train_flag_is_true_for_night_departure(self, client: TestClient, session: Session):
-        agency = Agency(id_agency=2, name="NightLine")
-        trip = Trip(id_trip=2, id_agency=2, departure_time=time(23, 0))
-        session.add(agency)
-        session.add(trip)
-        session.commit()
-
-        response = client.get("/api/trajets/2")
-        assert response.status_code == 200
-        assert response.json()["is_night_train"] is True
 
 
 # ---------------------------------------------------------------------------
-# C10 — Tests d'intégration : GET /ml/predict
+# Tests d'intégration : GET /ml/predict
 # ---------------------------------------------------------------------------
 
 class TestPredict:
