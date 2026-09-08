@@ -129,7 +129,7 @@ class TestIsNight:
 
 class TestGetAllTrips:
 
-    def test_returns_trip_with_agency_name(self, client: TestClient):
+    def test_returns_trip_with_agency_name(self, client: TestClient, seeded_trip: Trip):
         response = client.get("/api/trajets")
         assert response.status_code == 200
         data = response.json()
