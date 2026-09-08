@@ -1,8 +1,6 @@
 name: Backend CI/CD
 
-# Deplace depuis backend/.github/workflows/ le 08/09/2026 : GitHub Actions ne
-# lit que .github/workflows/ a la racine du depot. A son ancien emplacement,
-# ce workflow n'etait jamais execute.
+# Deplace depuis backend/.github/workflows/
 # Les commandes s'executent dans backend/ (defaults.run.working-directory) ;
 # le filtre paths evite de relancer la CI backend sur un changement frontend.
 
@@ -47,8 +45,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
-          cache: 'pip'
+          python-version: "3.11"
+          cache: "pip"
 
       - name: Install dependencies
         run: |
@@ -65,6 +63,7 @@ jobs:
       - name: Run tests with pytest
         env:
           DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+          API_KEY: obrail-local-api-key
         run: |
           pip install pytest pytest-cov
           pytest tests/ -v --cov=app --cov-report=xml
