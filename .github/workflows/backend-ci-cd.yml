@@ -63,6 +63,7 @@ jobs:
       - name: Run tests with pytest
         env:
           DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+          TEST_DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
           API_KEY: obrail-local-api-key
         run: |
           pip install pytest pytest-cov
