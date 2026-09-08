@@ -1,15 +1,31 @@
 name: Backend CI/CD
 
+# Deplace depuis backend/.github/workflows/ le 08/09/2026 : GitHub Actions ne
+# lit que .github/workflows/ a la racine du depot. A son ancien emplacement,
+# ce workflow n'etait jamais execute.
+# Les commandes s'executent dans backend/ (defaults.run.working-directory) ;
+# le filtre paths evite de relancer la CI backend sur un changement frontend.
+
 on:
   push:
     branches: [main, develop, add_github_actions]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci-cd.yml"
   pull_request:
     branches: [main, develop]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci-cd.yml"
+
+defaults:
+  run:
+    working-directory: backend
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: postgres:18
@@ -57,7 +73,7 @@ jobs:
         uses: codecov/codecov-action@v3
         if: always()
         with:
-          files: ./coverage.xml
+          files: ./backend/coverage.xml
           flags: unittests
           name: codecov-umbrella
 
@@ -107,7 +123,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: ./backend
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

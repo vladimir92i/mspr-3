@@ -1,0 +1,20 @@
+# Dependances de la chaine MLOps (ml/).
+#
+# Fichier distinct de backend/requirements.txt pour deux raisons :
+#  - backend/requirements.txt est encode en UTF-16LE et embarque tout
+#    l'outillage applicatif (FastAPI, SQLModel, Jupyter, matplotlib...) dont
+#    la chaine du modele n'a pas besoin ;
+#  - la reproductibilite du modele exige des versions epinglees, or la
+#    dependance xgboost n'y est pas versionnee.
+#
+# Versions epinglees sur celles reellement utilisees pour produire les
+# artefacts (relevees par introspection le 08/09/2026).
+
+joblib==1.5.3
+numpy==2.4.4
+pandas==3.0.2
+scikit-learn==1.8.0
+scipy==1.17.1
+xgboost==3.4.1
+PyYAML==6.0.3
+pytest==9.0.3

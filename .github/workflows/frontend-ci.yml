@@ -1,8 +1,24 @@
 name: frontend-ci
 
+# Deplace depuis frontend/.github/workflows/ le 08/09/2026 : GitHub Actions ne
+# lit que .github/workflows/ a la racine du depot. A son ancien emplacement,
+# ce workflow n'etait jamais execute.
+# Les commandes s'executent dans frontend/ (defaults.run.working-directory) ;
+# le filtre paths evite de relancer la CI frontend sur un changement backend.
+
 on:
   push:
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-ci.yml"
   pull_request:
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-ci.yml"
+
+defaults:
+  run:
+    working-directory: frontend
 
 jobs:
   build-test:
@@ -21,7 +37,7 @@ jobs:
         with:
           node-version: "22"
           cache: "pnpm"
-          cache-dependency-path: pnpm-lock.yaml
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
 
       - name: Install toutes les dependances du projet

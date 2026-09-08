@@ -6,3 +6,14 @@ grafana-data/pdf/*
 grafana-data/png/*
 grafana-data/plugins/*
 grafana-data/unified-search/*
+
+# Sorties de la chaine MLOps : regenerees a chaque execution par
+# ml/train.py et ml/evaluate.py, et publiees comme artefacts par le
+# workflow ml-model-cd.yml. Voir docs/MLOPS_PIPELINE.md section 3.3.
+ml/artifacts/
+ml/reports/
+
+# Caches Python
+__pycache__/
+*.pyc
+.pytest_cache/

@@ -1,0 +1,66 @@
+# Seuils de validation de la chaine MLOps - modele CO2 ObRail
+#
+# Ce fichier est versionne : toute modification d'un seuil est tracee dans Git.
+# Les valeurs sont calibrees sur les mesures reelles constatees dans le depot,
+# jamais au-dessus de la performance mesuree.
+
+# ---------------------------------------------------------------------------
+# Validation des donnees (ml/data/validate_data.py)
+# ---------------------------------------------------------------------------
+data:
+  # Schema attendu : colonne -> type pandas accepte ("int", "float")
+  schema:
+    distance: int
+    duration: int
+    departure_hour: int
+    id_agency: int
+    emission: float
+
+  # Colonnes qui ne doivent contenir aucune valeur nulle
+  critical_columns:
+    - distance
+    - emission
+
+  # Bornes physiques. Les bornes de distance refletent le domaine
+  # d'entrainement constate (min 405 / max 1503 dans dataset_final.csv).
+  bounds:
+    distance:
+      min_exclusive: 0
+      max: 5000
+    emission:
+      min: 0
+      max: 1000
+    departure_hour:
+      min: 0
+      max: 23
+
+  # Volumetrie minimale sous laquelle un entrainement n'a pas de sens
+  min_rows: 150
+
+  # Part maximale de lignes strictement dupliquees toleree.
+  # Mesure au 08/09/2026 sur data/dataset_final.csv : 1 / 212 = 0.0047
+  max_duplicate_ratio: 0.02
+
+# ---------------------------------------------------------------------------
+# Validation du modele (ml/evaluate.py)
+# ---------------------------------------------------------------------------
+model:
+  # Porte de qualite absolue.
+  # Reference mesuree dans le notebook E2 (02_modelisation.ipynb) :
+  # R2 test = 0.813, MAE test = 0.949, RMSE test = 1.813.
+  # Le seuil est place SOUS la valeur mesuree, jamais au-dessus.
+  r2_min: 0.75
+  mae_max: 2.0
+  rmse_max: 3.0
+
+  # Non-regression vis-a-vis du champion precedent (ml/champion/evaluation.json).
+  # Une baisse de R2 superieure a cette tolerance fait echouer le pipeline.
+  regression_tolerance_r2: 0.05
+
+# ---------------------------------------------------------------------------
+# Signature attendue du modele (ml/tests/test_model.py)
+# ---------------------------------------------------------------------------
+signature:
+  features:
+    - distance
+  n_features: 1

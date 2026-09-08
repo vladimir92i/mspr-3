@@ -6,7 +6,7 @@ Ce projet orchestre une architecture complète en microservices. Le code source 
 
 Pour garantir la sécurité, les réseaux sont segmentés :
 
-- **`frontend_net`** : Liaison entre Traefik, le Frontend et le Backend.
+- **`frontend_net`** : Liaison entre le Frontend et le Backend.
 - **`backend_net`** : Isolation de la Database (accessible uniquement par le Backend).
 - **`monitor_net`** : Flux dédié au monitoring.
 
