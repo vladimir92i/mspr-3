@@ -84,6 +84,7 @@ def seeded_trip(session: Session):
         departure_time=time(14, 0),
     )
     session.add(trip)
+    session.flush()
 
     stop = Stop(
         id_trip=1,
