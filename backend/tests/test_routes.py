@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
 from main import app
 from app.database import get_session
-from app.models.database_models import Trip, Agency, Station, Stop
+from app.models.database_models import Trip, Agency, Country, Station, Stop
 from app.api.endpoints.trips import _is_night, NIGHT_START, NIGHT_END
 
 # ---------------------------------------------------------------------------
@@ -65,12 +65,16 @@ def seeded_trip(session: Session):
     agency = Agency(id_agency=1, name="TrainOp")
     session.add(agency)
 
+    country = Country(id_country=1, name="France", code_iso="FR")
+    session.add(country)
+
     station = Station(
         id_station=1,
         name="Paris",
         city="Paris",
         stop_lat=48.8566,
         stop_lon=2.3522,
+        id_country=1,
     )
     session.add(station)
 
